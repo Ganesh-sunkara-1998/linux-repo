@@ -1,0 +1,172 @@
+#########################################........Access your remote machine to virtual machine..........#############################################
+
+Firstly we need to check deamon(back ground) service and its required packages are running are not:
+  -> To check ssh package is running and install are not #dpkg -l|grep openssh*
+  --> '*' will display all openssh packages with supported packages also.
+  --> Every service by default some configuration files are there.
+  --> whenever your server is running by default this ssh pacakages are installed defaulty.. without ssh we cannot able to manage your remote machine.
+  --> To check background (deamon) process is running are not # service ssh status
+  --> To check particular port is running or not #netstat -ntulp |grep :22
+  
+   SSH (Secure Shell):
+          --> It is a software standard to support Encrypted data transfer between two computers.
+          --> It can be used to support secure logins and file transfers of general purpose connections.
+                        (It can transfer files from ypur local machine to virtual machine.)
+          --> ssh default packages are:-
+                        1. openssh-client -->client package.
+                        2. openssh-server --> server package.
+          --> By default your operating system is upon running by default both packages are running. that's way we can able to manage your remote machine. 
+          --> ssh allows remote access.
+   deamon:
+          --> It is a background process.
+          --> once your service is running by default your "deamon" background process is running whenever your back ground is stopped your application is automatically down.
+          --> whenever your deamon is stopped your port number is down.
+
+          --> ssh default deamon is #ssh in ubuntu.
+          --> ssh default deamon is #sshd in redhat and centos
+          --> whenever your port number is not listen we need to check your particular port number deamon is running or not (ssh and sshd). 
+
+
+  protocols:
+          --> It is Establish connection between different network end points and also transfer data between from one location to another location by using this protocols.
+
+  netstat -ntulp:
+          --> It is a network statics.
+          --> ntulp stands for network transimission control protocol and user datagram and all server protocols are in active.
+                # some options for nestat command
+                      -a --> To active  all internet commands.
+                      -at --> To active Transimission control protocol.
+                      -au --> To active (or) listening user datagram protocol.
+                      -l --> To active (or) listening only server.
+          --> Generally we have two types of protocols.
+                  1. TCP --> Transimission control protocol:
+                          --> supported wire connection like "brought bank connection". 
+                          --> so we can transfer the data from source to destination location through wire.
+                  2. UDP --> User datagram protocol:
+                          --> supported wireless connection like "wifi".
+                          --> so we can run this command it will display both TCP and UDP connections as well.
+        TO check simply you particular port is listen or not simply grep it.
+             #  netstat -ntulp |grep :22       
+
+#####################################...... Connect your local machine to virtual machine ........#######################################
+
+--> we have two types of authentication ways
+   
+    1. key based authentication: (password less login)
+                  --> At the time of login we can give "username and specific server host name and ip address or key". by using key we can able to access.
+                  --> By default ec2 instance only allows key based authentication.
+                  --> everytime we need access server to client or client to server it will not ask any password or any key directly enter in to the target location.
+                  
+                  step-1:  we need two remote machines either redhat or ubuntu and both machines are by default allows key based authentication.
+                  step-2:  we want login one remote machine to another remote machine without asking any credientials.by using key based authentication we can manage.
+                  step-3:  incase we are able to login remote machine-1 to another machine we need to generate ssh keys by using #ssh-keygen
+                                --> It will generate 2 keys. 
+                                                        1.private keys --> #id_rsa  
+                                                        2.public keys --> #id_rsa.pub
+                                --> And both keys are generated under #/root/.ssh
+                                --> if you open any of both keys simply #cat id_rsa / #cat id_rsa.pub
+                  step-4:  public key we can securely placed your machine and private key we can copy targets locations.
+                  step-5:  redhat machine default login user name is #ec2-user@ <ip address>
+                                --> Firstly we can login virtual machine-2 before we able generete  keys and enable keybased authentication.
+                  step-6:  we need to access vm-1 to vm-2 simply required ssh key path. or using this command we can able to login.
+                                example: this is ubuntu machine public DNS end-point #ssh -i "linuxclskey.pem" ubuntu@ec2-13-232-84-83.ap-south-1.compute.amazonaws.com
+                                --> every virtual machine we have to login two points  
+                                                        1. DNS end point
+                                                        2. public end point
+                  step-7:   we need a vm-2 pem key in vm-1 so we need to create a vm-2 pem key file in vm-1 #vim <filekey.pem>
+                  step-8:   we need copy your local machine .pem key information in to your vm-1 
+                  step -9:  before access you need a read only permissions #chmod 400 <filekey.pem>
+                                --> otherwise if are enable group level and user level permissions it doesn't allows by default as per security reasons.
+                  step -10: after that we can able to login through public DNS end point.
+
+          --> we need single pem key and copied in to target machine. login in to one vm to another vm
+          --> we need a pem key without pem key we are unable to access. incase you don't have a pem key there are not provided default pem keys this keys are generated by amazon and their are provided you for login purpose.
+          --> if you logout vm-2 in vm-1 by using command # exit or logout 
+          --> pem or ppk both are private keys public key by default copied your server default authorized_keys location
+
+          
+ if you want to authenticate your own customised keys:
+          --> if you generate your own keys by using # ssh-keygen 
+          --> This keys are stored in # /root/.ssh/
+          --> This 2 keys are generated under root user  
+                                1. id_rsa --> private key  
+                                2. id_rsa.pub -->public key
+
+                        step-1: we need to copy your customised public key in to your target location  and private key we need to secure it.
+                        step-2: login to your target virtual machine and To check which user currently your # whoami
+                        step-3: we want to copy the default .pem key under .ssh folder we got a one folder authorised_keys we need to copy public key under this location #vi authorised_keys
+                        step-4: Inside this folder we have amazon generated key are there after that we add your customised key and saved it.
+                        step-5: To check virtual machine details #ifconfig    
+                        step-6: Then login default virtual machine under root user to login another virtual machine simply # ssh <target machine ip address>
+
+        --> we are not providing any login user and password and keys every time. simpy we can login ip address because we have already enable key based authentication.
+        --> whenever your are trying to excute this command #ssh <target server ip address> 
+        --> By default it will check your private key and your target server public key both are match by default it is allows login target machine.
+        Even amazon also excuted one backend script #ssh-keygen
+        --> once you click on lanunch any instance by default amazon has generated one script backend.  
+
+     2. password based authentication:
+                  --> At the time of login we can provide " username and required password"
+                  --> if we want to enable password based authentication before can change some permissions.
+                  --> but first time we can use to login pem or ppk keys.
+                  --> but once we can able to login after that we can able to login password based authentication.
+
+                step-1: ssh default configuration files are in #vim /etc/ssh/sshd_config  --> this is absolute path location.
+                --> any type of configuration file information is in #/etc
+                --> configuration file  content default port number, sensitive data information
+                step-2: inside configuration file we need to change password authentication no to yes.
+                --> if incase any changes are occurs inside configuration file we need restart your service. otherwise those changes are not updated.
+                step-3: To restart your back ground service simply # service ssh restart 
+                step-4: To create one user and also enable password that user.
+                step-5: After that copy that public ip address and login to your remote machine by using this username # username@<ipaddress>
+                --> Instead of uploading key we can directly login after that we need to give passwd then we can able to acess.
+                --> To check which user currently working # whaoami
+                --> first time login we need upload pem key or ppk next time we  no need to login.
+
+           --> we need single ip address to login 2 machines.
+                        1. main machine.
+                        2. usernames machine.
+
+
+######################################....... User and Group administration............##########################################
+
+ User-administration:
+        --> To create user #useradd <username> 
+        --> To enable password that user #passwd <username>
+        --> To listout all usernames #cat /etc/passwd
+        --> To listout all usernames password #cat /etc/shadow
+        -->To modifiy the user  #usermod <options> <username>
+                 options are
+                      --> all the options which are used with useradd command can be used and also the following,
+                                  -l to change login name
+                                  -L to LOCK account
+                                  -U to UNLOCK account
+        --> To set the password parameters. 1. #chage -l < user name>
+                                            2. #chage <option> <value> <username>
+                                                        The options which can be used are as follows
+                                                                -m for Min password age
+                                                                -M for Max password age
+                                                                -d for last time the password is changed.
+                                                                -W Password expiration warnings
+                                                                -I Password inactive [-1 means inactive].
+                                                                -E A/C expiration date
+
+        -->To delete user #userdel <username>
+
+Group-admistration:
+        --> To create group #groupadd <groupadd>
+        --> To listout all group information #cat /etc/group
+        --> To enable password that group #gpasswd <groupname>
+        --> To listout password information # cat /etc/gshadow
+        --> Changing the name of the group #groupmod –n <new name> <existing name>
+        --> Adding and Removing Members to a Group
+                        1. To add single user to the group  #usermod –G <group name > < user name> 
+                        2.Adding multiple single or multiple users to the group with various attributes  #gpasswd < option> <arguments> <group name>
+                 Options
+                  -M For Adding Multiple users to a group
+                  -A for Adding a group Administrator
+                  -a for Adding a single user to a group
+                  -d removing a user from a group
+              #gpasswd –M <user>,<user>,<user> <group>
+
+
