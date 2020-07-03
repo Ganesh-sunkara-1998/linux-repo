@@ -1,0 +1,160 @@
+######################################...............Remote file transfer with SCP and RSYNC....................##################################
+SCP (Secure Copy): 
+          --> It works only when keybased authentication is enable to one linux virtual machine to another virtual machine.
+          --> It copies data from one server to another server securely. 
+                        #scp <source location file-name/directory-name> <remote host ip:/ location to copy the directory>
+          --> another way to securely copy the file or directory.
+                        #scp  <remote host ip> :/<source location file-name\directory-name> < target location to copy the directory>
+          # It is not a bi-directional use because kwybased authentication is not a bidirectional access..
+
+RSYNC (Remote Synchronization):
+          --> We have logs file this file contains entire logs information every day what are the logs are generated in your operating system those logs are want to copied into this location.
+          --> Incase we want to use copy command it will override everyday and it will added the latest information.
+          --> That's way we use RSYNC it is a very good program for backingup/ mirroring a directory tree os files. from one machine to another machine and for keeping the two machines "in sync".
+          --> It will not override your old data but it will updated new data also.
+          --> RSYNC is trying to check both locations files while checking both file if it have same file it will not copied it will updated new files only. (or it will updated latest changes only)  
+          --> That means synchronization everytime it will synchronized. without loss any data.  
+          --> It's designed to speed up file transfer by copying the difference between two file rather than copying an entire file everytime.
+                # rsync -rv -e <source dir> <destination ip>:/<location of destination dir>
+                rv - recursive verb.  
+                   -v option it will display what are the data sending from source to destination.
+                   -e option to transfer data in encrypted format.
+
+#################################################....... Basic linux commands....................#########################################
+
+files commands:
+--> To Creating a file using cat command  # cat>filename (say ktfile)
+--> To display a file #cat filename
+--> To append new data in already existing file #cat >>filename
+--> Creating multiple files at same time #touch <filename> <filename> <filename>
+--> Copying files into directory  #cp <source filename> <destination directory in which to paste the file>
+--> Moving files from one location to other (cut and Paste) #mv <filename> <Destination directory>
+--> Renaming a File #mv <old name> <new name>
+--> Removing a File #rm filename or #rm –f filename (without prompting)
+
+
+directory commands:
+--> Creating a Directory #mkdir <dir name>
+--> To Making multiple directories inside a directory  #mkdir –p KernelTech/{Linux/{advlinux,linuxclstr},Aix/{hacmp,lpar},Storage/{san,netapp}}
+      
+      
+      KernelTech
+          | ----------------------|-------------------|  
+       Linux ---->|-- advlinux    |                   |
+               -->|-- linuxclstr  |                   |
+                                 Aix ---->|-- hacmp   |
+                                     ---->|-- Ipar    |
+                                                   Storage  ---->|--san
+                                                            ---->|--netapp  
+
+
+--> Copying directories from one location to other # cp –rvfp <dir name> <destination name>
+--> Moving a Directory from one location to other #mv <dir name> <destination dir name>
+--> Renaming a Directory #mv old name new name
+--> Removing an Empty directory #rmdir dirname
+--> Removing a directory with files or directories inside
+         A dir which is having some contents inside it cannot be removed by rmdir command. There are two ways to delete the directory with contents.
+            i. Remove the contents inside the directory and then run rmdir command
+            ii. Run #rm –rf dirname (where r stands for recursive and f stands for forcefully).
+
+
+#####################################............Symbolic Link.............#####################################
+There are two types of Links:-
+Soft Link:                                                                     Hard link:
+1.Size of link file is equal to no. of                                      1. Size of both file is same
+characters in the name of original file
+
+2.Can be created across the Partition                                       2. Can't be created across the partition
+
+3.Inode no. of source and link file is                                      3. Inode no. of both file is same
+different
+
+4.if original file is deleted, link is broken                               4. If original file is deleted then also link
+ and data is lost                                                                       will contain data
+
+5.SHORTCUT FILE                                                             5. BACKUP FILE
+
+Creating a soft link:                                                       Creating a Hard link:
+# ln –s <source file> <destination>                                         #ln <source file> <Destination>
+
+###############################...........Regular Expressions, Pipelines & I/O Redirections................###############################
+
+Grep:
+      --> Grep stands for Global Regular Expression Print. 
+      --> It is used to pick out the required expression from the file and print the output. #grep root /etc/passwd
+      --> If grep is combined with another command it can be used to pick out the selected word, phrase from the output of first command and print it. #cat ktfile | grep –I kernel (pipe | is used to combine to commands)
+      --> To display the things except the given word #grep –v kernel ktfile
+      --> To display the searched word in color #grep --color root /etc/passwd
+
+I/O Redirections:
+      --> Redirection is a process where we can copy the output of any command(s), file(s) into a new file. There are two ways of redirecting the output into a file.
+      --> Using > or >> filename after the command, and Using tee command
+      --> To add a data in to file then old data is overwrited. #command > new file
+                  Note: if the given name of the file is not available a new file will be created automatically. If the file already exists then it will overwrite contents of that file. 
+      --> To Appending another output in same the same file. # command file1 >> file2
+      --> The above options of redirections will not display any output, but directly save the output in a file. Using tee command will not only redirect the output to new file but it will also display the output. # cat <filename> | tee <new file name>
+                  Note: if the given name of the file (newfile) is not available a new file will be created automatically. If the file already exists then it will overwrite contents of the file.
+
+      --> Appending data in the same file using tee command # cat filename |tee –a filename2
+
+Find command:
+      --> find command is used to find the files or directory’s path, it is exactly like the find option in windows where you can search for a file. #find / (under root) –option filename
+            Options that can be used with find command:
+            Option Usage
+                  -name For searching a file with its name
+                  -inum For searching a file with particular inode number
+                  -type For searching a particular type of file
+                  -user For files whose owner is a particular user
+                  -group For files belonging to particular group  
+
+###################################............Filter Commands.............................############################################
+
+--> Filter commands are used to filter the output so that the required things can easily be picked up. 
+--> The commands which are used to filter the output are  less, more, head, tail, sort, cut, sed
+
+less: The less command is used to see the output line wise or page wise. #Ex:- less /etc/passwd
+            Note: -press Enter key to scroll down line by line (or)
+                   Use d to go to next page
+                   Use b to go to previous page
+                   Use / to search for a word in the file
+                   Use v to go vi mode where you can edit the file and once you save it you will back to less command.
+
+more: more is exactly same like less #Ex:- #more /etc/passwd
+            Note: -press Enter key to scroll down line by line (or)
+                        Use d to go to next page
+                        Use / to search for a word in the file
+                        Use v to go vi mode where you can edit the file and once you save it you will back to more command
+
+head: --> It is used to display the top 10 lines of the file. #Ex:# head /etc/passwd
+      --> To display the custom lines. #head -n /etc/passwd (where n can be any number)
+
+tail: --> It is used to display the last 10 lines of the file #tail /etc/passwd
+      --> To display the custom lines #tail -n /etc/passwd (where n can be any number)
+
+Sort: --> It is used to sort the output in numeric or alphabetic order #sort filename
+      --> To sort the file according to numbers #sort –d ktfile or #sort –h ktfile
+      --> To remove the duplicate entries from the output #sort –u ktfile
+
+cut: --> The cut command is used to pick the given expression (in columns) and display the output. # cut -d -f filename (where d stands for delimiter ex. : , “ “ etc and f stands for field)
+     --> To delimit spaces and print the field #cut –d “ “ –f1 filename
+
+sed: --> sed stands for stream editor, which is used to search a word in the file and replace it with the word required to be in the output. #sed ‘s/searchfor/replacewith/g’ filename
+      Note: it will only modify the output, but there will be no change in the original file.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
